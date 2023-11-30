@@ -46,6 +46,7 @@ public class CustomerService
                 MovieId = movie.Id,
                 CustomerId = customer.Id,
                 ExpirationDate = expirationDate,
+                PurchaseDate = DateTime.UtcNow,
                 Price = price
             };
 

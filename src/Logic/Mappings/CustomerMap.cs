@@ -12,6 +12,9 @@ public class CustomerMap : IEntityTypeConfiguration<Customer>
         entity.HasKey(e => e.Id);
         entity.Property(e => e.Id).HasColumnName("CustomerID");
 
+        entity.HasMany<PurchasedMovie>(e => e.PurchasedMovies)
+            .WithOne(e => e.Customer);
+        
         entity.Property(e => e.Name).HasColumnName("Name");
         entity.Property(e => e.Email).HasColumnName("Email");
         entity.Property(e => e.Status).HasColumnName("Status");

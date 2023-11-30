@@ -12,7 +12,7 @@ public class Customer : Entity
     public virtual string Name { get; set; }
 
     [Required]
-    [RegularExpression(@"^(.+)@(.+)$", ErrorMessage = "Email is invalid")]
+    [EmailAddress]
     public virtual string Email { get; set; }
 
     [JsonConverter(typeof(StringEnumConverter<,,>))]
@@ -22,5 +22,6 @@ public class Customer : Entity
 
     public virtual decimal MoneySpent { get; set; }
 
+    [JsonIgnore]
     public virtual IList<PurchasedMovie> PurchasedMovies { get; set; }
 }

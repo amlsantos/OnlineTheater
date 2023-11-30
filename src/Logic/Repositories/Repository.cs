@@ -11,7 +11,7 @@ public abstract class Repository<T> where T : Entity
         Context = context;
     }
 
-    public T? GetById(long id)
+    public virtual T? GetById(long id)
     {
         return Context.Set<T>().Find(id);
     }

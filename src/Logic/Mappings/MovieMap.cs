@@ -14,5 +14,6 @@ public class MovieMap : IEntityTypeConfiguration<Movie>
         
         entity.Property(e => e.Name).HasColumnName("Name");
         entity.Property(e => e.LicensingModel).HasColumnName("LicensingModel");
+        
     }
 }
