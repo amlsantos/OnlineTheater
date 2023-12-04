@@ -70,7 +70,7 @@ public class CustomersController : ControllerBase
     }
 
     [HttpPost("[action]")]
-    public IActionResult Create([FromBody] Customer customer)
+    public IActionResult Create([FromBody] CreateCustomerDto item)
     {
         try
         {
@@ -82,14 +82,18 @@ public class CustomersController : ControllerBase
                 
                 return BadRequest(errors);
             }
-                
-
-            if (_customerRepository.GetByEmail(customer.Email) != null)
-                return BadRequest("Email is already in use: " + customer.Email);
-
-            customer.Id = 0;
-            customer.Status = CustomerStatus.Regular;
             
+            if (_customerRepository.GetByEmail(item.Email) != null)
+                return BadRequest("Email is already in use: " + item.Email);
+
+            var customer = new Customer
+            {
+                Name = item.Name,
+                Email = item.Email,
+                MoneySpent = 0,
+                Status = CustomerStatus.Regular,
+                StatusExpirationDate = null
+            };
             _customerRepository.Add(customer);
             _customerRepository.SaveChanges();
 
@@ -102,7 +106,7 @@ public class CustomersController : ControllerBase
     }
 
     [HttpPut("[action]")]
-    public IActionResult Update(long id, [FromBody] Customer updatedCustomer)
+    public IActionResult Update(long id, [FromBody] UpdateCustomerDto item)
     {
         try
         {
@@ -119,7 +123,7 @@ public class CustomersController : ControllerBase
             if (existingCustomer is null)
                 return BadRequest("Invalid customer id: " + id);
 
-            existingCustomer.Name = updatedCustomer.Name;
+            existingCustomer.Name = item.Name;
             
             _customerRepository.SaveChanges();
 
