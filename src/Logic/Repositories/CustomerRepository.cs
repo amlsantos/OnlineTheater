@@ -18,16 +18,7 @@ public class CustomerRepository : Repository<Customer>
             .FirstOrDefault(c => c.Id == id);
     }
 
-    public IReadOnlyList<Customer> GetList()
-    {
-        return Context.Customers.ToList()
-            .Select(x =>
-            {
-                x.PurchasedMovies = null;
-                return x;
-            })
-            .ToList();
-    }
+    public IReadOnlyList<Customer> GetList() => Context.Customers.ToList();
 
     public Customer GetByEmail(string email)
     {

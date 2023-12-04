@@ -15,13 +15,8 @@ public class Customer : Entity
     [EmailAddress]
     public virtual string Email { get; set; }
 
-    [JsonConverter(typeof(StringEnumConverter<,,>))]
     public virtual CustomerStatus Status { get; set; }
-
     public virtual DateTime? StatusExpirationDate { get; set; }
-
     public virtual decimal MoneySpent { get; set; }
-
-    [JsonIgnore]
     public virtual IList<PurchasedMovie> PurchasedMovies { get; set; }
 }
