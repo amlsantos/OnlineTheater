@@ -74,22 +74,20 @@ public class CustomersController : ControllerBase
     {
         try
         {
-            if (!ModelState.IsValid)
-            {
-                var errors = ModelState
-                    .Values
-                    .SelectMany(v => v.Errors);
-                
-                return BadRequest(errors);
-            }
+            var customerOrError = CustomerName.Create(item.Name);
+            var emailOrError = Email.Create(item.Email);
+            
+            var validationResult = Result.Combine(customerOrError, emailOrError);
+            if (validationResult.IsFailure)
+                return BadRequest(validationResult.Error);
             
             if (_customerRepository.GetByEmail(item.Email) != null)
                 return BadRequest("Email is already in use: " + item.Email);
 
             var customer = new Customer
             {
-                Name = new CustomerName(item.Name),
-                Email = new Email(item.Email),
+                Name = customerOrError.Value,
+                Email = emailOrError.Value,
                 MoneySpent = 0,
                 Status = CustomerStatus.Regular,
                 StatusExpirationDate = null
@@ -110,20 +108,15 @@ public class CustomersController : ControllerBase
     {
         try
         {
-            if (!ModelState.IsValid)
-            {
-                var errors = ModelState
-                    .Values
-                    .SelectMany(v => v.Errors);
-                
-                return BadRequest(errors);
-            }
+            var customerOrError = CustomerName.Create(item.Name);
+            if (customerOrError.IsFailure)
+                return BadRequest(customerOrError.Error);
 
             var existingCustomer = _customerRepository.GetById(id);
             if (existingCustomer is null)
                 return BadRequest("Invalid customer id: " + id);
 
-            existingCustomer.Name = new CustomerName(item.Name);
+            existingCustomer.Name = customerOrError.Value;
             
             _customerRepository.SaveChanges();
 
