@@ -22,6 +22,6 @@ public class CustomerRepository : Repository<Customer>
 
     public Customer GetByEmail(string email)
     {
-        return Context.Customers.SingleOrDefault(x => x.Email == email);
+        return Context.Customers.SingleOrDefault(x => x.Email.Value == email);
     }
 }

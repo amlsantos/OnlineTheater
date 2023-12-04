@@ -31,8 +31,8 @@ public class CustomersController : ControllerBase
         var dto = new CustomerDto
         {
             Id = customer.Id,
-            Name = customer.Name,
-            Email = customer.Email,
+            Name = customer.Name.Value,
+            Email = customer.Email.Value,
             MoneySpent = customer.MoneySpent,
             Status = customer.Status.ToString(),
             StatusExpirationDate = customer.StatusExpirationDate,
@@ -59,8 +59,8 @@ public class CustomersController : ControllerBase
         var dtos = customers.Select(x => new CustomerInListDto
         {
             Id = x.Id,
-            Name = x.Name,
-            Email = x.Email,
+            Name = x.Name.Value,
+            Email = x.Email.Value,
             MoneySpent = x.MoneySpent,
             Status = x.Status.ToString(),
             StatusExpirationDate = x.StatusExpirationDate
@@ -88,8 +88,8 @@ public class CustomersController : ControllerBase
 
             var customer = new Customer
             {
-                Name = item.Name,
-                Email = item.Email,
+                Name = new CustomerName(item.Name),
+                Email = new Email(item.Email),
                 MoneySpent = 0,
                 Status = CustomerStatus.Regular,
                 StatusExpirationDate = null
@@ -123,7 +123,7 @@ public class CustomersController : ControllerBase
             if (existingCustomer is null)
                 return BadRequest("Invalid customer id: " + id);
 
-            existingCustomer.Name = item.Name;
+            existingCustomer.Name = new CustomerName(item.Name);
             
             _customerRepository.SaveChanges();
 
