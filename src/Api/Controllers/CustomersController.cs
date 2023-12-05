@@ -76,12 +76,12 @@ public class CustomersController : ControllerBase
         {
             var customerOrError = CustomerName.Create(item.Name);
             var emailOrError = Email.Create(item.Email);
-            
             var validationResult = Result.Combine(customerOrError, emailOrError);
+            
             if (validationResult.IsFailure)
                 return BadRequest(validationResult.Error);
             
-            if (_customerRepository.GetByEmail(item.Email) != null)
+            if (_customerRepository.GetByEmail(emailOrError.Value.Value) != null)
                 return BadRequest("Email is already in use: " + item.Email);
 
             var customer = new Customer
@@ -167,15 +167,11 @@ public class CustomersController : ControllerBase
                 return BadRequest("Invalid customer id: " + id);
 
             if (customer.Status == CustomerStatus.Advanced && (customer.StatusExpirationDate == null || customer.StatusExpirationDate.Value < DateTime.UtcNow))
-            {
                 return BadRequest("The customer already has the Advanced status");
-            }
 
             var success = _customerService.PromoteCustomer(customer);
             if (!success)
-            {
                 return BadRequest("Cannot promote the customer");
-            }
 
             _customerRepository.SaveChanges();
             return Ok();

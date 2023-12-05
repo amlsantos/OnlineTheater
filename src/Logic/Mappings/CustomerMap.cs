@@ -16,7 +16,13 @@ public class CustomerMap : IEntityTypeConfiguration<Customer>
             .WithOne(e => e.Customer);
         
         entity.Property(e => e.Name).HasColumnName("Name");
+        entity.Property(e => e.Name).HasConversion(v => v.Value,
+            v => CustomerName.Create(v).Value);
+        
         entity.Property(e => e.Email).HasColumnName("Email");
+        entity.Property(e => e.Email).HasConversion(v => v.Value,
+            v => Email.Create(v).Value);
+        
         entity.Property(e => e.Status).HasColumnName("Status");
         entity.Property(e => e.StatusExpirationDate).HasColumnName("StatusExpirationDate");
         entity.Property(e => e.MoneySpent).HasColumnName("MoneySpent");
