@@ -1,4 +1,5 @@
 ﻿using Logic.Entities;
+using Logic.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -24,7 +25,10 @@ public class CustomerMap : IEntityTypeConfiguration<Customer>
             v => Email.Create(v).Value);
         
         entity.Property(e => e.Status).HasColumnName("Status");
+        
         entity.Property(e => e.StatusExpirationDate).HasColumnName("StatusExpirationDate");
+        entity.Property(e => e.StatusExpirationDate).HasConversion(v => v.Date, v => v.ToExpirationDate());
+        entity.Property(e => e.StatusExpirationDate).IsRequired(false);
         
         entity.Property(e => e.MoneySpent).HasColumnName("MoneySpent");
         entity.Property(e => e.MoneySpent).HasConversion(v => v.Value, 

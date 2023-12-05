@@ -1,4 +1,5 @@
 ﻿using Logic.Entities;
+using Logic.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -23,9 +24,12 @@ public class PurchasedMovieMap : IEntityTypeConfiguration<PurchasedMovie>
         entity.Property(e => e.MovieId).HasColumnName("MovieID");
         
         entity.Property(e => e.Price).HasColumnName("Price");
+        entity.Property(e => e.Price).HasConversion(v => v.Value, v => Dollars.Of(v));
+        
         entity.Property(e => e.PurchaseDate).HasColumnName("PurchaseDate");
         
         entity.Property(e => e.ExpirationDate).HasColumnName("ExpirationDate");
-        // entity.Property(e => e.ExpirationDate).HasColumnType("datetime2");
+        entity.Property(e => e.ExpirationDate).IsRequired(false);
+        entity.Property(e => e.ExpirationDate).HasConversion(v => v.Date, v => v.ToExpirationDate());
     }
 }
