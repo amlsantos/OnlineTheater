@@ -25,6 +25,9 @@ public class CustomerMap : IEntityTypeConfiguration<Customer>
         
         entity.Property(e => e.Status).HasColumnName("Status");
         entity.Property(e => e.StatusExpirationDate).HasColumnName("StatusExpirationDate");
+        
         entity.Property(e => e.MoneySpent).HasColumnName("MoneySpent");
+        entity.Property(e => e.MoneySpent).HasConversion(v => v.Value, 
+            v => Dollars.Of(v));
     }
 }

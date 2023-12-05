@@ -88,7 +88,7 @@ public class CustomersController : ControllerBase
             {
                 Name = customerOrError.Value,
                 Email = emailOrError.Value,
-                MoneySpent = 0,
+                MoneySpent = Dollars.Of(0),
                 Status = CustomerStatus.Regular,
                 StatusExpirationDate = null
             };

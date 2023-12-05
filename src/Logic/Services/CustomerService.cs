@@ -11,17 +11,17 @@ public class CustomerService
             _movieService = movieService;
         }
 
-        private decimal CalculatePrice(CustomerStatus status, DateTime? statusExpirationDate, LicensingModel licensingModel)
+        private Dollars CalculatePrice(CustomerStatus status, DateTime? statusExpirationDate, LicensingModel licensingModel)
         {
-            decimal price;
+            Dollars price;
             switch (licensingModel)
             {
                 case LicensingModel.TwoDays:
-                    price = 4;
+                    price = Dollars.Of(4);
                     break;
 
                 case LicensingModel.LifeLong:
-                    price = 8;
+                    price = Dollars.Of(8);
                     break;
 
                 default:
