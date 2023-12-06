@@ -46,7 +46,7 @@ public class CustomersController : ControllerBase
                 PurchaseDate = x.PurchaseDate,
                 Movie = new MovieDto()
                 {
-                    Id = x.MovieId,
+                    Id = x.Movie.Id,
                     Name = x.Movie.Name
                 }
             }).ToList()
@@ -83,7 +83,7 @@ public class CustomersController : ControllerBase
             
             if (validationResult.IsFailure)
                 return BadRequest(validationResult.Error);
-
+            
             var email = emailOrError.Value.Value;
             var existingEmail = _customerRepository.GetByEmail(email);
             if (existingEmail != null)
@@ -102,17 +102,17 @@ public class CustomersController : ControllerBase
     }
 
     [HttpPut("[action]")]
-    public IActionResult Update(long id, [FromBody] UpdateCustomerDto item)
+    public IActionResult Update(long customerId, [FromBody] UpdateCustomerDto entity)
     {
         try
         {
-            var nameOrError = CustomerName.Create(item.Name);
+            var nameOrError = CustomerName.Create(entity.Name);
             if (nameOrError.IsFailure)
                 return BadRequest(nameOrError.Error);
 
-            var existingCustomer = _customerRepository.GetById(id);
+            var existingCustomer = _customerRepository.GetById(customerId);
             if (existingCustomer is null)
-                return BadRequest("Invalid customer id: " + id);
+                return BadRequest("Invalid customer id: " + customerId);
 
             existingCustomer.Name = nameOrError.Value;
             
@@ -127,7 +127,7 @@ public class CustomersController : ControllerBase
     }
 
     [HttpPut("[action]")]
-    public IActionResult PurchaseMovie(long id, [FromBody] long movieId)
+    public IActionResult PurchaseMovie(long customerId, [FromBody] long movieId)
     {
         try
         {
@@ -135,11 +135,11 @@ public class CustomersController : ControllerBase
             if (movie is null)
                 return BadRequest("Invalid movie id: " + movieId);
 
-            var customer = _customerRepository.GetById(id);
+            var customer = _customerRepository.GetById(customerId);
             if (customer is null)
-                return BadRequest("Invalid customer id: " + id);
+                return BadRequest("Invalid customer id: " + customerId);
             
-            if (customer.PurchasedMovies.Any(x => x.MovieId == movie.Id && !x.ExpirationDate.IsExpired))
+            if (customer.PurchasedMovies.Any(x => x.Movie.Id == movie.Id && !x.ExpirationDate.IsExpired))
                 return BadRequest("The movie is already purchased: " + movie.Name);
             
             _customerService.PurchaseMovie(customer, movie);
@@ -154,13 +154,13 @@ public class CustomersController : ControllerBase
     }
 
     [HttpPost("[action]")]
-    public IActionResult PromoteCustomer(long id)
+    public IActionResult PromoteCustomer(long customerId)
     {
         try
         {
-            var existingCustomer = _customerRepository.GetById(id);
+            var existingCustomer = _customerRepository.GetById(customerId);
             if (existingCustomer is null)
-                return BadRequest("Invalid customer id: " + id);
+                return BadRequest("Invalid customer id: " + customerId);
             
             if (existingCustomer.Status.IsAdvanced)
                 return BadRequest("The customer already has the Advanced status");
