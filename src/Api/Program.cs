@@ -20,6 +20,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddTransient<MovieRepository>();
 builder.Services.AddTransient<CustomerRepository>();
+builder.Services.AddTransient<PurchaseMovieRepository>();
+
 builder.Services.AddTransient<MovieService>();
 builder.Services.AddTransient<CustomerService>();
 

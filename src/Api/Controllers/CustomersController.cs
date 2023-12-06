@@ -14,7 +14,10 @@ public class CustomersController : ControllerBase
     private readonly CustomerRepository _customerRepository;
     private readonly CustomerService _customerService;
     
-    public CustomersController(MovieRepository movieRepository, CustomerRepository customerRepository, CustomerService customerService)
+    public CustomersController(
+        MovieRepository movieRepository, 
+        CustomerRepository customerRepository,
+        CustomerService customerService)
     {
         _movieRepository = movieRepository;
         _customerRepository = customerRepository;
@@ -34,8 +37,8 @@ public class CustomersController : ControllerBase
             Name = customer.Name.Value,
             Email = customer.Email.Value,
             MoneySpent = customer.MoneySpent,
-            Status = customer.Status.ToString(),
-            StatusExpirationDate = customer.StatusExpirationDate,
+            Status = customer.Status.Type.ToString(),
+            StatusExpirationDate = customer.Status.ExpirationDate,
             PurchasedMovies = customer.PurchasedMovies.Select(x => new PurchasedMovieDto
             {
                 Price = x.Price,
@@ -62,8 +65,8 @@ public class CustomersController : ControllerBase
             Name = x.Name.Value,
             Email = x.Email.Value,
             MoneySpent = x.MoneySpent,
-            Status = x.Status.ToString(),
-            StatusExpirationDate = x.StatusExpirationDate
+            Status = x.Status.Type.ToString(),
+            StatusExpirationDate = x.Status.ExpirationDate,
         }).ToList();
         
         return Ok(dtos);
@@ -80,8 +83,10 @@ public class CustomersController : ControllerBase
             
             if (validationResult.IsFailure)
                 return BadRequest(validationResult.Error);
-            
-            if (_customerRepository.GetByEmail(emailOrError.Value.Value) != null)
+
+            var email = emailOrError.Value.Value;
+            var existingEmail = _customerRepository.GetByEmail(email);
+            if (existingEmail is not null)
                 return BadRequest("Email is already in use: " + item.Email);
 
             var customer = new Customer(nameOrError.Value, emailOrError.Value);
@@ -156,14 +161,14 @@ public class CustomersController : ControllerBase
             var existingCustomer = _customerRepository.GetById(id);
             if (existingCustomer is null)
                 return BadRequest("Invalid customer id: " + id);
-
-            if (existingCustomer.Status == CustomerStatus.Advanced && !existingCustomer.StatusExpirationDate.IsExpired)
+            
+            if (existingCustomer.Status.IsAdvanced)
                 return BadRequest("The customer already has the Advanced status");
-
+            
             var success = _customerService.PromoteCustomer(existingCustomer);
             if (!success)
                 return BadRequest("Cannot promote the customer");
-
+            
             _customerRepository.SaveChanges();
             return Ok();
         }

@@ -24,11 +24,11 @@ public class CustomerMap : IEntityTypeConfiguration<Customer>
         entity.Property(e => e.Email).HasConversion(v => v.Value,
             v => Email.Create(v).Value);
         
-        entity.Property(e => e.Status).HasColumnName("Status");
-        
-        entity.Property(e => e.StatusExpirationDate).HasColumnName("StatusExpirationDate");
-        entity.Property(e => e.StatusExpirationDate).HasConversion(v => v.Date, v => v.ToExpirationDate());
-        entity.Property(e => e.StatusExpirationDate).IsRequired(false);
+        var status = entity.OwnsOne<CustomerStatus>(e => e.Status);
+        status.Property(e => e.Type).HasColumnName("Status");
+        status.Property(e => e.ExpirationDate).HasColumnName("StatusExpirationDate");
+        status.Property(e => e.ExpirationDate).HasConversion(v => v.Date, v => v.ToExpirationDate());
+        status.Property(e => e.ExpirationDate).IsRequired(false);
         
         entity.Property(e => e.MoneySpent).HasColumnName("MoneySpent");
         entity.Property(e => e.MoneySpent).HasConversion(v => v.Value, 

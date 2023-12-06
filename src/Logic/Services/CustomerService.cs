@@ -11,7 +11,15 @@ public class CustomerService
             _movieService = movieService;
         }
 
-        private Dollars CalculatePrice(CustomerStatus status, ExpirationDate statusExpirationDate, LicensingModel licensingModel)
+        public void PurchaseMovie(Customer customer, Movie movie)
+        {
+            var expirationDate = _movieService.GetExpirationDate(movie.LicensingModel);
+            var price = CalculatePrice(customer.Status, movie.LicensingModel);
+
+            customer.AddPurchaseMovie(movie, expirationDate, price);
+        }
+
+        private Dollars CalculatePrice(CustomerStatus status, LicensingModel licensingModel)
         {
             Dollars price;
             switch (licensingModel)
@@ -28,20 +36,10 @@ public class CustomerService
                     throw new ArgumentOutOfRangeException();
             }
 
-            if (status == CustomerStatus.Advanced && !statusExpirationDate.IsExpired)
-            {
+            if (status.IsAdvanced) 
                 price = price * 0.75m;
-            }
 
             return price;
-        }
-
-        public void PurchaseMovie(Customer customer, Movie movie)
-        {
-            var expirationDate = _movieService.GetExpirationDate(movie.LicensingModel);
-            var price = CalculatePrice(customer.Status, customer.StatusExpirationDate, movie.LicensingModel);
-
-            customer.AddPurchaseMovie(movie, expirationDate, price);
         }
 
         public bool PromoteCustomer(Customer customer)
@@ -54,8 +52,7 @@ public class CustomerService
             if (customer.PurchasedMovies.Where(x => x.PurchaseDate > DateTime.UtcNow.AddYears(-1)).Sum(x => x.Price) < 100m)
                 return false;
 
-            customer.Status = CustomerStatus.Advanced;
-            customer.StatusExpirationDate = (ExpirationDate)DateTime.UtcNow.AddYears(1);
+            customer.Status = customer.Status.Promote();
 
             return true;
         }

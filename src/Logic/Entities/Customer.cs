@@ -4,8 +4,7 @@ public class Customer : Entity
 {
     public virtual CustomerName Name { get; set; }
     public virtual Email Email { get; protected set; }
-    public virtual CustomerStatus Status { get; set; }
-    public virtual ExpirationDate StatusExpirationDate { get; set; }
+    public CustomerStatus Status { get; set; }
     public virtual Dollars MoneySpent { get; protected set; }
 
     private readonly IList<PurchasedMovie> _purchasedMovies;
@@ -20,7 +19,6 @@ public class Customer : Entity
         
         MoneySpent = Dollars.Of(0);
         Status = CustomerStatus.Regular;
-        StatusExpirationDate = ExpirationDate.Infinite;
     }
 
     public void AddPurchaseMovie(Movie movie, ExpirationDate expirationDate, Dollars price)
