@@ -86,7 +86,7 @@ public class CustomersController : ControllerBase
 
             var email = emailOrError.Value.Value;
             var existingEmail = _customerRepository.GetByEmail(email);
-            if (existingEmail is not null)
+            if (existingEmail != null)
                 return BadRequest("Email is already in use: " + item.Email);
 
             var customer = new Customer(nameOrError.Value, emailOrError.Value);
