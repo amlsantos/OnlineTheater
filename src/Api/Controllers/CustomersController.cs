@@ -74,9 +74,9 @@ public class CustomersController : ControllerBase
     {
         try
         {
-            var customerOrError = CustomerName.Create(item.Name);
+            var nameOrError = CustomerName.Create(item.Name);
             var emailOrError = Email.Create(item.Email);
-            var validationResult = Result.Combine(customerOrError, emailOrError);
+            var validationResult = Result.Combine(nameOrError, emailOrError);
             
             if (validationResult.IsFailure)
                 return BadRequest(validationResult.Error);
@@ -84,14 +84,7 @@ public class CustomersController : ControllerBase
             if (_customerRepository.GetByEmail(emailOrError.Value.Value) != null)
                 return BadRequest("Email is already in use: " + item.Email);
 
-            var customer = new Customer
-            {
-                Name = customerOrError.Value,
-                Email = emailOrError.Value,
-                MoneySpent = Dollars.Of(0),
-                Status = CustomerStatus.Regular,
-                StatusExpirationDate = null
-            };
+            var customer = new Customer(nameOrError.Value, emailOrError.Value);
             _customerRepository.Add(customer);
             _customerRepository.SaveChanges();
 
@@ -108,15 +101,15 @@ public class CustomersController : ControllerBase
     {
         try
         {
-            var customerOrError = CustomerName.Create(item.Name);
-            if (customerOrError.IsFailure)
-                return BadRequest(customerOrError.Error);
+            var nameOrError = CustomerName.Create(item.Name);
+            if (nameOrError.IsFailure)
+                return BadRequest(nameOrError.Error);
 
             var existingCustomer = _customerRepository.GetById(id);
             if (existingCustomer is null)
                 return BadRequest("Invalid customer id: " + id);
 
-            existingCustomer.Name = customerOrError.Value;
+            existingCustomer.Name = nameOrError.Value;
             
             _customerRepository.SaveChanges();
 
@@ -140,10 +133,10 @@ public class CustomersController : ControllerBase
             var customer = _customerRepository.GetById(id);
             if (customer is null)
                 return BadRequest("Invalid customer id: " + id);
-
+            
             if (customer.PurchasedMovies.Any(x => x.MovieId == movie.Id && !x.ExpirationDate.IsExpired))
                 return BadRequest("The movie is already purchased: " + movie.Name);
-
+            
             _customerService.PurchaseMovie(customer, movie);
             _customerRepository.SaveChanges();
             
@@ -160,14 +153,14 @@ public class CustomersController : ControllerBase
     {
         try
         {
-            var customer = _customerRepository.GetById(id);
-            if (customer is null)
+            var existingCustomer = _customerRepository.GetById(id);
+            if (existingCustomer is null)
                 return BadRequest("Invalid customer id: " + id);
 
-            if (customer.Status == CustomerStatus.Advanced && !customer.StatusExpirationDate.IsExpired)
+            if (existingCustomer.Status == CustomerStatus.Advanced && !existingCustomer.StatusExpirationDate.IsExpired)
                 return BadRequest("The customer already has the Advanced status");
 
-            var success = _customerService.PromoteCustomer(customer);
+            var success = _customerService.PromoteCustomer(existingCustomer);
             if (!success)
                 return BadRequest("Cannot promote the customer");
 
