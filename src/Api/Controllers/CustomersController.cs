@@ -165,7 +165,7 @@ public class CustomersController : ControllerBase
             if (existingCustomer.Status.IsAdvanced)
                 return BadRequest("The customer already has the Advanced status");
             
-            var success = _customerService.PromoteCustomer(existingCustomer);
+            var success = existingCustomer.Promote();
             if (!success)
                 return BadRequest("Cannot promote the customer");
             

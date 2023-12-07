@@ -2,7 +2,7 @@
 using Logic.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Logic.Utils;
+namespace Logic.Repositories;
 
 public class ApplicationDbContext : DbContext
 {

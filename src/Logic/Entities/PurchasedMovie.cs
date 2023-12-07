@@ -20,8 +20,11 @@ public class PurchasedMovie : Entity
     internal PurchasedMovie(Movie movie, Customer customer, Dollars price, ExpirationDate expirationDate) : this()
     {
         Movie = movie ?? throw new ArgumentException(nameof(movie));
+        MovieId = movie.Id;
+
         Customer = customer ?? throw new ArgumentException(nameof(customer));
-        
+        CustomerId = customer.Id;
+
         if (price is null || price.IsZero)
             throw new ArgumentException(nameof(price));
         Price = price;

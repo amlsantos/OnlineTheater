@@ -1,5 +1,4 @@
 ﻿using Logic.Entities;
-using Logic.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logic.Repositories;

@@ -1,6 +1,5 @@
 using Logic.Repositories;
 using Logic.Services;
-using Logic.Utils;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
