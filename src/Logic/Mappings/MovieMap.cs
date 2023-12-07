@@ -11,9 +11,11 @@ public class MovieMap : IEntityTypeConfiguration<Movie>
         entity.ToTable("Movie", "dbo");
         entity.HasKey(e => e.Id);
         entity.Property(e => e.Id).HasColumnName("MovieID");
-        
         entity.Property(e => e.Name).HasColumnName("Name");
         entity.Property(e => e.LicensingModel).HasColumnName("LicensingModel");
         
+        entity.HasDiscriminator(e => e.LicensingModel)
+            .HasValue<TwoDaysMovie>(LicensingModel.TwoDays)
+            .HasValue<LifeLongMovie>(LicensingModel.LifeLong);
     }
 }
