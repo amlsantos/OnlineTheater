@@ -1,4 +1,5 @@
 ﻿using Logic.Dtos;
+using Logic.Entities;
 using Logic.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,7 +20,7 @@ public class MoviesController : ControllerBase
         if (movie is null)
             return NotFound();
 
-        var dto = new MovieDto()
+        var dto = new MovieDto
         {
             Id = movie.Id,
             Name = movie.Name
@@ -32,10 +33,11 @@ public class MoviesController : ControllerBase
     public IActionResult GetList()
     {
         var movies = _movieRepository.GetList();
-        var dtos = movies.Select(m => new MovieDto()
+        var dtos = movies.Select(m => new MovieInListDto
         {
             Id = m.Id,
-            Name = m.Name
+            Name = m.Name,
+            LicenseModel = m.LicensingModel == LicensingModel.TwoDays ? "TwoDays" : "LifeLong"
         }).ToList();
 
         return Ok(dtos);
