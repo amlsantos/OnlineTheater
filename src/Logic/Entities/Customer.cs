@@ -21,8 +21,11 @@ public class Customer : Entity
         Status = CustomerStatus.Regular;
     }
 
-    public void AddPurchaseMovie(Movie movie, ExpirationDate expirationDate, Dollars price)
+    public void PurchaseMovie(Movie movie)
     {
+        var expirationDate =  movie.GetExpirationDate();
+        var price = movie.CalculatePrice(Status);
+        
         var purchasedMovie = new PurchasedMovie(movie, this, price, expirationDate);
         _purchasedMovies.Add(purchasedMovie);
         MoneySpent += price;

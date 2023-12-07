@@ -1,5 +1,4 @@
 using Logic.Repositories;
-using Logic.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,9 +19,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddTransient<MovieRepository>();
 builder.Services.AddTransient<CustomerRepository>();
 builder.Services.AddTransient<PurchaseMovieRepository>();
-
-builder.Services.AddTransient<MovieService>();
-builder.Services.AddTransient<CustomerService>();
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())

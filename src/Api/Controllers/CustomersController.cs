@@ -1,7 +1,6 @@
 ﻿using Logic.Dtos;
 using Logic.Entities;
 using Logic.Repositories;
-using Logic.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -12,16 +11,11 @@ public class CustomersController : ControllerBase
 {
     private readonly MovieRepository _movieRepository;
     private readonly CustomerRepository _customerRepository;
-    private readonly CustomerService _customerService;
     
-    public CustomersController(
-        MovieRepository movieRepository, 
-        CustomerRepository customerRepository,
-        CustomerService customerService)
+    public CustomersController(MovieRepository movieRepository, CustomerRepository customerRepository)
     {
         _movieRepository = movieRepository;
         _customerRepository = customerRepository;
-        _customerService = customerService;
     }
     
     [HttpGet("[action]")]
@@ -142,7 +136,7 @@ public class CustomersController : ControllerBase
             if (customer.PurchasedMovies.Any(x => x.Movie.Id == movie.Id && !x.ExpirationDate.IsExpired))
                 return BadRequest("The movie is already purchased: " + movie.Name);
             
-            _customerService.PurchaseMovie(customer, movie);
+            customer.PurchaseMovie(movie);
             _customerRepository.SaveChanges();
             
             return Ok();
