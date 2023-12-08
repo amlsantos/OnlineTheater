@@ -9,14 +9,13 @@ namespace Api.Controllers;
 [Route("[controller]")]
 public class MoviesController : ControllerBase
 {
-    private readonly MovieRepository _movieRepository;
+    private readonly IUnitOfWork _unitOfWork;
+    public MoviesController(IUnitOfWork unitOfWork) => _unitOfWork = unitOfWork;
 
-    public MoviesController(MovieRepository movieRepository) => _movieRepository = movieRepository;
-    
     [HttpGet("[action]")]
     public IActionResult Get(long id)
     {
-        var movie = _movieRepository.GetById(id);
+        var movie = _unitOfWork.Movies.GetById(id);
         if (movie is null)
             return NotFound();
 
@@ -32,7 +31,7 @@ public class MoviesController : ControllerBase
     [HttpGet("[action]")]
     public IActionResult GetList()
     {
-        var movies = _movieRepository.GetList();
+        var movies = _unitOfWork.Movies.GetList();
         var dtos = movies.Select(m => new MovieInListDto
         {
             Id = m.Id,

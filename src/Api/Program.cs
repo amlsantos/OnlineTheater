@@ -19,6 +19,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddTransient<MovieRepository>();
 builder.Services.AddTransient<CustomerRepository>();
 builder.Services.AddTransient<PurchaseMovieRepository>();
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())

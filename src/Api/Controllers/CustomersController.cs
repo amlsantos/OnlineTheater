@@ -7,21 +7,14 @@ namespace Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class CustomersController : ControllerBase 
+public class CustomersController : BaseController
 {
-    private readonly MovieRepository _movieRepository;
-    private readonly CustomerRepository _customerRepository;
-    
-    public CustomersController(MovieRepository movieRepository, CustomerRepository customerRepository)
-    {
-        _movieRepository = movieRepository;
-        _customerRepository = customerRepository;
-    }
-    
+    public CustomersController(IUnitOfWork unitOfWork) : base(unitOfWork) { }
+
     [HttpGet("[action]")]
     public IActionResult Get(long id)
     {
-        var customer = _customerRepository.GetById(id);
+        var customer = UnitOfWork.Customers.GetById(id);
         if (customer is null)
             return NotFound();
 
@@ -52,7 +45,7 @@ public class CustomersController : ControllerBase
     [HttpGet("[action]")]
     public IActionResult GetList()
     {
-        var customers = _customerRepository.GetList();
+        var customers = UnitOfWork.Customers.GetList();
         var dtos = customers.Select(x => new CustomerInListDto
         {
             Id = x.Id,
@@ -79,13 +72,12 @@ public class CustomersController : ControllerBase
                 return BadRequest(validationResult.Error);
             
             var email = emailOrError.Value.Value;
-            var existingEmail = _customerRepository.GetByEmail(email);
+            var existingEmail = UnitOfWork.Customers.GetByEmail(email);
             if (existingEmail != null)
                 return BadRequest("Email is already in use: " + item.Email);
 
             var customer = new Customer(nameOrError.Value, emailOrError.Value);
-            _customerRepository.Add(customer);
-            _customerRepository.SaveChanges();
+            UnitOfWork.Customers.Add(customer);
 
             return Ok();
         }
@@ -104,14 +96,12 @@ public class CustomersController : ControllerBase
             if (nameOrError.IsFailure)
                 return BadRequest(nameOrError.Error);
 
-            var existingCustomer = _customerRepository.GetById(customerId);
+            var existingCustomer = UnitOfWork.Customers.GetById(customerId);
             if (existingCustomer is null)
                 return BadRequest("Invalid customer id: " + customerId);
 
             existingCustomer.Name = nameOrError.Value;
             
-            _customerRepository.SaveChanges();
-
             return Ok();
         }
         catch (Exception e)
@@ -125,11 +115,11 @@ public class CustomersController : ControllerBase
     {
         try
         {
-            var movie = _movieRepository.GetById(movieId);
+            var movie = UnitOfWork.Movies.GetById(movieId);
             if (movie is null)
                 return BadRequest("Invalid movie id: " + movieId);
 
-            var customer = _customerRepository.GetById(customerId);
+            var customer = UnitOfWork.Customers.GetById(customerId);
             if (customer is null)
                 return BadRequest("Invalid customer id: " + customerId);
             
@@ -137,7 +127,6 @@ public class CustomersController : ControllerBase
                 return BadRequest("The movie is already purchased: " + movie.Name);
             
             customer.PurchaseMovie(movie);
-            _customerRepository.SaveChanges();
             
             return Ok();
         }
@@ -152,7 +141,7 @@ public class CustomersController : ControllerBase
     {
         try
         {
-            var existingCustomer = _customerRepository.GetById(customerId);
+            var existingCustomer = UnitOfWork.Customers.GetById(customerId);
             if (existingCustomer is null)
                 return BadRequest("Invalid customer id: " + customerId);
             
@@ -163,7 +152,6 @@ public class CustomersController : ControllerBase
             if (!success)
                 return BadRequest("Cannot promote the customer");
             
-            _customerRepository.SaveChanges();
             return Ok();
         }
         catch (Exception e)

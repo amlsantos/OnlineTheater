@@ -19,19 +19,4 @@ public abstract class Repository<T> where T : Entity
     {
         Context.Set<T>().Add(entity);
     }
-
-    public void Remove(T entity)
-    {
-        Context.Set<T>().Remove(entity);
-    }
-    
-    public int SaveChanges()
-    {
-        return Context.SaveChanges();
-    }
-    
-    public async Task<int> SaveChangesAsync()
-    {
-        return await Context.SaveChangesAsync();
-    }
 }
