@@ -2,10 +2,10 @@
 
 public class Customer : Entity
 {
-    public virtual CustomerName Name { get; set; }
-    public virtual Email Email { get; protected set; }
-    public CustomerStatus Status { get; set; }
-    public virtual Dollars MoneySpent { get; protected set; }
+    public CustomerName Name { get; set; }
+    public Email Email { get; }
+    public CustomerStatus Status { get; private set; }
+    public Dollars MoneySpent { get; set; }
 
     private readonly IList<PurchasedMovie> _purchasedMovies;
     public virtual IReadOnlyList<PurchasedMovie> PurchasedMovies => _purchasedMovies.ToList();
