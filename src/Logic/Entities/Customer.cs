@@ -2,7 +2,7 @@
 
 public class Customer : Entity
 {
-    public CustomerName Name { get; set; }
+    public Name Name { get; set; }
     public Email Email { get; }
     public CustomerStatus Status { get; private set; }
     public Dollars MoneySpent { get; set; }
@@ -12,7 +12,7 @@ public class Customer : Entity
 
     public Customer() => _purchasedMovies = new List<PurchasedMovie>();
     
-    public Customer(CustomerName name, Email email) : this()
+    public Customer(Name name, Email email) : this()
     {
         Name = name ?? throw new ArgumentNullException(nameof(name));
         Email = email ?? throw new ArgumentNullException(nameof(email));

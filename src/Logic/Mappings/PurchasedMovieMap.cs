@@ -32,9 +32,5 @@ public class PurchasedMovieMap : IEntityTypeConfiguration<PurchasedMovie>
         expirationDate.Property(e => e.Date).HasColumnName("ExpirationDate");
         expirationDate.Property(e => e.Date).IsRequired(false);
         expirationDate.Property(e => e.Date).HasConversion(v => v, v => v.ToExpirationDate());
-        
-        // entity.Property(e => e.ExpirationDate).HasColumnName("ExpirationDate");
-        // entity.Property(e => e.ExpirationDate).IsRequired(false);
-        // entity.Property(e => e.ExpirationDate).HasConversion(v => v.Date, v => v.ToExpirationDate());
     }
 }

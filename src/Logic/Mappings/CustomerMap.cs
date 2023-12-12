@@ -18,7 +18,7 @@ public class CustomerMap : IEntityTypeConfiguration<Customer>
         
         entity.Property(e => e.Name).HasColumnName("Name");
         entity.Property(e => e.Name).HasConversion(v => v.Value,
-            v => CustomerName.Create(v).Value);
+            v => Name.Create(v).Value);
         
         entity.Property(e => e.Email).HasColumnName("Email");
         entity.Property(e => e.Email).HasConversion(v => v.Value,

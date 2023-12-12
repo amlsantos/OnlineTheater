@@ -31,7 +31,7 @@ public class CustomersController : BaseController
                 Price = x.Price,
                 ExpirationDate = x.ExpirationDate,
                 PurchaseDate = x.PurchaseDate,
-                Movie = new MovieDto()
+                Movie = new MovieDto
                 {
                     Id = x.Movie.Id,
                     Name = x.Movie.Name
@@ -64,7 +64,7 @@ public class CustomersController : BaseController
     {
         try
         {
-            var nameOrError = CustomerName.Create(item.Name);
+            var nameOrError = Name.Create(item.Name);
             var emailOrError = Email.Create(item.Email);
             var validationResult = Result.Combine(nameOrError, emailOrError);
             
@@ -92,7 +92,7 @@ public class CustomersController : BaseController
     {
         try
         {
-            var nameOrError = CustomerName.Create(entity.Name);
+            var nameOrError = Name.Create(entity.Name);
             if (nameOrError.IsFailure)
                 return BadRequest(nameOrError.Error);
 

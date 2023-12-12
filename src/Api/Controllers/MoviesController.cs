@@ -1,5 +1,5 @@
 ﻿using Logic.Dtos;
-using Logic.Entities;
+using Logic.Extensions;
 using Logic.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,7 +36,7 @@ public class MoviesController : ControllerBase
         {
             Id = m.Id,
             Name = m.Name,
-            LicenseModel = m.LicensingModel == LicensingModel.TwoDays ? "TwoDays" : "LifeLong"
+            LicenseModel = m.LicensingModel.Name()
         }).ToList();
 
         return Ok(dtos);
