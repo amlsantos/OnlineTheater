@@ -1,3 +1,4 @@
+using Api.Middlewares;
 using Logic.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,6 +23,8 @@ builder.Services.AddTransient<PurchaseMovieRepository>();
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
+app.UseMiddleware<ExceptionHandler>();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

@@ -45,4 +45,9 @@ public class Customer : Entity
 
         return true;
     }
+
+    public bool AlreadyPurchasedMovie(long movieId)
+    {
+        return PurchasedMovies.Any(x => x.Movie.Id == movieId && !x.ExpirationDate.IsExpired);
+    }
 }
