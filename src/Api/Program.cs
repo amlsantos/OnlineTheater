@@ -1,5 +1,8 @@
-using Api.Middlewares;
-using Logic.Repositories;
+using Api.Utils;
+using Logic.Customers;
+using Logic.Movies;
+using Logic.PurchasedMovies;
+using Logic.Utils;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
