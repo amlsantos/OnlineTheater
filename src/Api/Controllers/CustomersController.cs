@@ -110,7 +110,7 @@ public class CustomersController : BaseController
         if (customer is null)
             return Error("Invalid customer id: " + customerId);
 
-        if (customer.AlreadyPurchasedMovie(movie.Id))
+        if (customer.HasPurchasedMovie(movie))
             return Error("The movie with id: " + movie.Id + " is already purchased: " + movie.Name);
 
         customer.PurchaseMovie(movie);
@@ -125,12 +125,11 @@ public class CustomersController : BaseController
         if (existingCustomer is null)
             return Error("Invalid customer id: " + customerId);
 
-        if (existingCustomer.Status.IsAdvanced)
-            return Error("The customer already has the Advanced status");
-
-        var success = existingCustomer.Promote();
-        if (!success)
-            return Error("Cannot promote the customer");
+        var promotionCheck = existingCustomer.CanPromote();
+        if (promotionCheck.IsFailure)
+            return Error(promotionCheck.Error);
+        
+        existingCustomer.Promote();
 
         return Ok();
     }
