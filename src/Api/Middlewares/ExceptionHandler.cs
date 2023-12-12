@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Api.Utils;
 using Newtonsoft.Json;
 
 namespace Api.Middlewares;
@@ -26,7 +27,7 @@ public class ExceptionHandler
 
     private Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
-        var result = JsonConvert.SerializeObject(new { error = exception.Message });
+        var result = JsonConvert.SerializeObject(Envelope.Error(exception.Message));
 
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;

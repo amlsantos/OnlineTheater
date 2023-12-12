@@ -1,4 +1,5 @@
-﻿using Logic.Dtos;
+﻿using System.Runtime.InteropServices.JavaScript;
+using Logic.Dtos;
 using Logic.Entities;
 using Logic.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +19,7 @@ public class CustomersController : BaseController
     {
         var customer = UnitOfWork.Customers.GetById(id);
         if (customer is null)
-            return BadRequest("There is no user, for the given id: " + id);
+            return Error("There is no user, for the given id: " + id);
 
         var dto = new CustomerDto
         {
@@ -69,12 +70,12 @@ public class CustomersController : BaseController
         var validationResult = Result.Combine(nameOrError, emailOrError);
 
         if (validationResult.IsFailure)
-            return BadRequest(validationResult.Error);
+            return Error(validationResult.Error);
 
         var email = emailOrError.Value.Value;
         var existingEmail = UnitOfWork.Customers.GetByEmail(email);
         if (existingEmail != null)
-            return BadRequest("Email is already in use: " + item.Email);
+            return Error("Email is already in use: " + item.Email);
 
         var customer = new Customer(nameOrError.Value, emailOrError.Value);
         UnitOfWork.Customers.Add(customer);
@@ -87,11 +88,11 @@ public class CustomersController : BaseController
     {
         var nameOrError = Name.Create(entity.Name);
         if (nameOrError.IsFailure)
-            return BadRequest(nameOrError.Error);
+            return Error(nameOrError.Error);
 
         var existingCustomer = UnitOfWork.Customers.GetById(customerId);
         if (existingCustomer is null)
-            return BadRequest("Invalid customer id: " + customerId);
+            return Error("Invalid customer id: " + customerId);
 
         existingCustomer.Name = nameOrError.Value;
 
@@ -103,14 +104,14 @@ public class CustomersController : BaseController
     {
         var movie = UnitOfWork.Movies.GetById(movieId);
         if (movie is null)
-            return BadRequest("Invalid movie id: " + movieId);
+            return Error("Invalid movie id: " + movieId);
 
         var customer = UnitOfWork.Customers.GetById(customerId);
         if (customer is null)
-            return BadRequest("Invalid customer id: " + customerId);
+            return Error("Invalid customer id: " + customerId);
 
         if (customer.AlreadyPurchasedMovie(movie.Id))
-            return BadRequest("The movie with id: " + movie.Id + " is already purchased: " + movie.Name);
+            return Error("The movie with id: " + movie.Id + " is already purchased: " + movie.Name);
 
         customer.PurchaseMovie(movie);
 
@@ -122,14 +123,14 @@ public class CustomersController : BaseController
     {
         var existingCustomer = UnitOfWork.Customers.GetById(customerId);
         if (existingCustomer is null)
-            return BadRequest("Invalid customer id: " + customerId);
+            return Error("Invalid customer id: " + customerId);
 
         if (existingCustomer.Status.IsAdvanced)
-            return BadRequest("The customer already has the Advanced status");
+            return Error("The customer already has the Advanced status");
 
         var success = existingCustomer.Promote();
         if (!success)
-            return BadRequest("Cannot promote the customer");
+            return Error("Cannot promote the customer");
 
         return Ok();
     }

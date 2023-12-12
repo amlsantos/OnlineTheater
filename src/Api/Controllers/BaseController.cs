@@ -1,4 +1,5 @@
-﻿using Logic.Repositories;
+﻿using Api.Utils;
+using Logic.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -12,17 +13,17 @@ public abstract class BaseController : ControllerBase
     protected new IActionResult Ok()
     {
         UnitOfWork.SaveChanges();
-        return base.Ok();
+        return base.Ok(Envelope.Ok());
     }
 
     protected IActionResult Ok<T>(T result)
     {
         UnitOfWork.SaveChanges();
-        return base.Ok(result);
+        return base.Ok(Envelope.Ok(result));
     }
 
     protected IActionResult Error(string errorMessage)
     {
-        return BadRequest(errorMessage);
+        return BadRequest(Envelope.Error(errorMessage));
     }
 }
