@@ -73,12 +73,15 @@ public class CustomersController : BaseController
         if (validationResult.IsFailure)
             return Error(validationResult.Error);
 
-        var email = emailOrError.Value.Value;
-        var existingEmail = UnitOfWork.Customers.GetByEmail(email);
-        if (existingEmail != null)
+        var newEmail = emailOrError.Value;
+        var existingCustomer = UnitOfWork.Customers.GetByEmail(newEmail.Value);
+        if (existingCustomer.Email != null)
             return Error("Email is already in use: " + item.Email);
 
-        var customer = new Customer(nameOrError.Value, emailOrError.Value);
+        var name = nameOrError.Value;
+        var email = emailOrError.Value;
+        var customer = new Customer(name, email);
+        
         UnitOfWork.Customers.Add(customer);
 
         return Ok();

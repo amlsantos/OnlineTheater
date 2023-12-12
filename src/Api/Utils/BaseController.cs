@@ -5,9 +5,9 @@ namespace Api.Utils;
 
 public abstract class BaseController : ControllerBase
 {
-    protected IUnitOfWork UnitOfWork;
+    protected readonly IUnitOfWork UnitOfWork;
 
-    public BaseController(IUnitOfWork unitOfWork) => UnitOfWork = unitOfWork;
+    protected BaseController(IUnitOfWork unitOfWork) => UnitOfWork = unitOfWork;
     
     protected new IActionResult Ok()
     {
